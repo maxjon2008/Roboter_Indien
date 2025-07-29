@@ -81,8 +81,13 @@ int motor4_Speed=6;
 int H_p = 1;
 int L_p = 0;
 
+byte error, address; 
+
 void setup() //This code is executed once
 {
+  //Initialize the Serial Port to view information on the Serial Monitor
+  Serial.begin(9600);
+
 
   pinMode(motor1_A,OUTPUT);
  
@@ -95,6 +100,22 @@ void setup() //This code is executed once
   //Initialize I2C communication
   Wire.begin();
 
+  // check I2C transmission
+  // address = 0x28;
+  // Wire.beginTransmission(address);
+  // error = Wire.endTransmission();
+  // if (error == 0)
+  // {
+  //   Serial.print("I2C device found at address 0x");
+  //   Serial.print(address, HEX);
+  //   Serial.println("  !");
+  // }
+  // else
+  // {
+  //   Serial.println("I2C Device error or I2C device not found");
+  // }
+  // delay(5000);
+
   //Initialization of the BNO055
   BNO_Init(&myBNO); //Assigning the structure to hold information about the device
 
@@ -104,8 +125,7 @@ void setup() //This code is executed once
 
   delay(1);
 
-  //Initialize the Serial Port to view information on the Serial Monitor
-  Serial.begin(9600);
+
 
   //Initialize the Serial Port for data output
   mySerial.begin(9600);
@@ -123,7 +143,7 @@ void setup() //This code is executed once
 		bno055_get_syscalib_status(&sysCalibStatus); //To read out the System Calibration Status (0-3)
     
     // Message to serial monitor
-    Serial.println("waiting for sensor calibration");
+    mySerial.println("waiting for sensor calibration");
 
 #ifndef DEBUG    
     // print sensor calibration status
