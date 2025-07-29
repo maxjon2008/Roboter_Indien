@@ -52,6 +52,9 @@ struct bno055_euler myEulerData; //Structure to hold the Euler data
 struct bno055_quaternion myQuaternionData; // Structure to hold Quaternion Data
 
 unsigned long lastTime = 0;
+unsigned long lastTime_M = 0;
+
+int S_A = 0;
 
 // variables hold calibration status
 unsigned char accelCalibStatus = 0;	
@@ -61,10 +64,34 @@ unsigned char sysCalibStatus = 0;
 unsigned char calibStatus = 0; 
 
 // serial data output interface
-SoftwareSerial mySerial(10, 11);
+SoftwareSerial mySerial(5, 4);
+
+int motor1_A=13;
+int motor1_Speed=11;
+ 
+int motor2_A=8;
+int motor2_Speed=9;
+
+int motor3_A=12;
+int motor3_Speed=10;
+ 
+int motor4_A=7;
+int motor4_Speed=6;
+
+int H_p = 1;
+int L_p = 0;
 
 void setup() //This code is executed once
 {
+
+  pinMode(motor1_A,OUTPUT);
+ 
+  pinMode(motor2_A,OUTPUT);
+
+  pinMode(motor3_A,OUTPUT);
+ 
+  pinMode(motor4_A,OUTPUT);
+
   //Initialize I2C communication
   Wire.begin();
 
@@ -131,10 +158,33 @@ void setup() //This code is executed once
     // bitwise AND of sensor calibration status
     calibStatus = accelCalibStatus & magCalibStatus & gyroCalibStatus & sysCalibStatus;
   }
+  analogWrite(motor1_Speed,255); // speed counts from 0 to 255
+  analogWrite(motor2_Speed,255); // speed counts from 0 to 255
+  analogWrite(motor3_Speed,255); // speed counts from 0 to 255
+  analogWrite(motor4_Speed,255); // speed counts from 0 to 255
 }
 
 void loop() //This code is looped forever
 {
+
+  if ((millis() - lastTime_M) >= 3000){
+    lastTime_M = millis();
+    if (S_A == 1){
+      digitalWrite(motor1_A,LOW); // A = HIGH and B = LOW means the motor will turn right
+      digitalWrite(motor2_A,LOW); // A = HIGH and B = LOW means the motor will turn right
+      digitalWrite(motor3_A,LOW); // A = HIGH and B = LOW means the motor will turn right
+      digitalWrite(motor4_A,LOW); // A = HIGH and B = LOW means the motor will turn right
+      S_A = 0;
+    }
+    else if (S_A == 0){
+      digitalWrite(motor1_A,HIGH); // A = HIGH and B = LOW means the motor will turn right
+      digitalWrite(motor2_A,HIGH); // A = HIGH and B = LOW means the motor will turn right
+      digitalWrite(motor3_A,HIGH); // A = HIGH and B = LOW means the motor will turn right
+      digitalWrite(motor4_A,HIGH); // A = HIGH and B = LOW means the motor will turn right
+      S_A = 1;
+    }
+  }
+
   if ((millis() - lastTime) >= 200) //To stream at 5Hz without using additional timers
   {
     lastTime = millis();
