@@ -30,7 +30,8 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(encoder_Motor1),counter_Motor1,RISING);
   attachInterrupt(digitalPinToInterrupt(encoder_Motor2),counter_Motor2,RISING);
 
-  Wire.begin();
+  Wire.begin(0x01);
+  Wire.onReceive(receiveEvent);
 }
 
 void loop() {
@@ -40,9 +41,6 @@ void loop() {
   {
     previousMillis = currentMillis;
 
-    Wire.requestFrom(0x05,3);
-    
-    int targetPulses = Wire.read();
     Serial.println(targetPulses);
 
     // === Regelung ===
@@ -69,6 +67,12 @@ void loop() {
   int potiValue = analogRead(potiPin);
   targetPulses = map(potiValue,0,1023,0,130);
 
+}
+
+void receiveEvent(int bytes) {
+  if (bytes >= sizeof(int)) {
+    Wire.readBytes((byte*)&targetPulses, sizeof(int));
+  }
 }
 
 void counter_Motor1(){
