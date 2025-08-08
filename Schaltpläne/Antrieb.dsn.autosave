@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--This file was written by TinyCAD 3.00.04 develop
+If you wish to view this file go to https://www.tinycad.net to
+download the executable.-->
+<TinyCADSheets>
+	<TinyCAD>
+		<NAME>Sheet 1</NAME>
+		<DETAILS>
+			<Size width='2100' height='1485'/>
+			<GUIDES horiz='7' vert='5'/>
+			<TITLE></TITLE>
+			<AUTHOR></AUTHOR>
+			<REVISION>1.0</REVISION>
+			<DOCNUMBER></DOCNUMBER>
+			<ORGANISATION></ORGANISATION>
+			<SHEETS>1 of 1</SHEETS>
+			<SHOWS>1</SHOWS>
+			<DATE></DATE>
+			<GRID spacing='100.00000' snap='1'/>
+		</DETAILS>
+		<FONT id='1'>
+			<HEIGHT>-10</HEIGHT>
+			<WIDTH>0</WIDTH>
+			<WEIGHT>400</WEIGHT>
+			<ITALIC>0</ITALIC>
+			<UNDERLINE>0</UNDERLINE>
+			<STRIKEOUT>0</STRIKEOUT>
+			<CHARSET>0</CHARSET>
+			<FACENAME>Arial</FACENAME>
+		</FONT>
+		<FONT id='3'>
+			<HEIGHT>-13</HEIGHT>
+			<WIDTH>6</WIDTH>
+			<WEIGHT>400</WEIGHT>
+			<ITALIC>0</ITALIC>
+			<UNDERLINE>0</UNDERLINE>
+			<STRIKEOUT>0</STRIKEOUT>
+			<CHARSET>0</CHARSET>
+			<FACENAME>Arial</FACENAME>
+		</FONT>
+		<STYLE id='2'>
+			<STYLE>0</STYLE>
+			<COLOR>000000</COLOR>
+			<THICKNESS>1</THICKNESS>
+		</STYLE>
+		<FILL id='0'>
+			<INDEX>-1</INDEX>
+			<COLOR>000000</COLOR>
+		</FILL>
+		<FILL id='1'>
+			<INDEX>0</INDEX>
+			<COLOR>000000</COLOR>
+		</FILL>
+		<FILL id='2'>
+			<INDEX>0</INDEX>
+			<COLOR>C0C0C0</COLOR>
+		</FILL>
+		<SYMBOLDEF id='3'>
+			<NAME type='0'></NAME>
+			<REF type='0'></REF>
+			<DESCRIPTION>Arduino Uno</DESCRIPTION>
+			<PPP>1</PPP>
+			<GUID></GUID>
+			<FIELD>
+				<NAME>$$SPICE_PROLOG_PRIORITY</NAME>
+				<DEFAULT>5</DEFAULT>
+				<FT>000002</FT>
+				<VALUE></VALUE>
+				<POS>0.00000,0.00000</POS>
+			</FIELD>
+			<FIELD>
+				<NAME>$$SPICE_EPILOG_PRIORITY</NAME>
+				<DEFAULT>5</DEFAULT>
+				<FT>000002</FT>
+				<VALUE></VALUE>
+				<POS>0.00000,0.00000</POS>
+			</FIELD>
+			<FIELD>
+				<NAME>Package</NAME>
+				<DEFAULT></DEFAULT>
+				<FT>000001</FT>
+				<VALUE></VALUE>
+				<POS>0.00000,0.00000</POS>
+			</FIELD>
+			<REF_POINT power='0' part='0' pos='214.00000,86.00000'/>
+			<TinyCAD>
+				<RECTANGLE a='180.00000,44.00000' b='208.00000,86.00000' style='2' fill='0'/>
+				<PIN pos='214.00000,48.00000' which='0' elec='0' direction='2' part='0' number='1' show='1' length='30' number_pos='0' centre_name='0'>SCL</PIN>
+				<PIN pos='214.00000,50.00000' which='0' elec='0' direction='2' part='0' number='2' show='1' length='30' number_pos='0' centre_name='0'>SDA</PIN>
+				<PIN pos='214.00000,52.00000' which='0' elec='0' direction='2' part='0' number='3' show='1' length='30' number_pos='0' centre_name='0'>AREF</PIN>
+				<PIN pos='214.00000,54.00000' which='0' elec='0' direction='2' part='0' number='4' show='1' length='30' number_pos='0' centre_name='0'>GND</PIN>
+				<PIN pos='214.00000,56.00000' which='0' elec='0' direction='2' part='0' number='5' show='1' length='30' number_pos='0' centre_name='0'>13</PIN>
+				<PIN pos='214.00000,58.00000' which='0' elec='0' direction='2' part='0' number='6' show='1' length='30' number_pos='0' centre_name='0'>12</PIN>
+				<PIN pos='214.00000,60.00000' which='0' elec='0' direction='2' part='0' number='7' show='1' length='30' number_pos='0' centre_name='0'>~11</PIN>
+				<PIN pos='214.00000,62.00000' which='0' elec='0' direction='2' part='0' number='8' show='1' length='30' number_pos='0' centre_name='0'>~10</PIN>
+				<PIN pos='214.00000,64.00000' which='0' elec='0' direction='2' part='0' number='9' show='1' length='30' number_pos='0' centre_name='0'>~9</PIN>
+				<PIN pos='214.00000,66.00000' which='0' elec='0' direction='2' part='0' number='1' show='1' length='30' number_pos='0' centre_name='0'>8</PIN>
+				<PIN pos='214.00000,70.00000' which='0' elec='0' direction='2' part='0' number='2' show='1' length='30' number_pos='0' centre_name='0'>7</PIN>
+				<PIN pos='214.00000,72.00000' which='0' elec='0' direction='2' part='0' number='3' show='1' length='30' number_pos='0' centre_name='0'>~6</PIN>
+				<PIN pos='214.00000,74.00000' which='0' elec='0' direction='2' part='0' number='4' show='1' length='30' number_pos='0' centre_name='0'>~5</PIN>
+				<PIN pos='214.00000,76.00000' which='0' elec='0' direction='2' part='0' number='5' show='1' length='30' number_pos='0' centre_name='0'>4</PIN>
+				<PIN pos='214.00000,78.00000' which='0' elec='0' direction='2' part='0' number='6' show='1' length='30' number_pos='0' centre_name='0'>~3</PIN>
+				<PIN pos='214.00000,80.00000' which='0' elec='0' direction='2' part='0' number='7' show='1' length='30' number_pos='0' centre_name='0'>2</PIN>
+				<PIN pos='214.00000,82.00000' which='0' elec='0' direction='2' part='0' number='8' show='1' length='30' number_pos='0' centre_name='0'>1(TX)</PIN>
+				<PIN pos='214.00000,84.00000' which='0' elec='0' direction='2' part='0' number='9' show='1' length='30' number_pos='0' centre_name='0'>0(RX)</PIN>
+				<PIN pos='174.00000,74.00000' which='0' elec='0' direction='3' part='0' number='1' show='1' length='30' number_pos='0' centre_name='0'>A0</PIN>
+				<PIN pos='174.00000,76.00000' which='0' elec='0' direction='3' part='0' number='2' show='1' length='30' number_pos='0' centre_name='0'>A1</PIN>
+				<PIN pos='174.00000,78.00000' which='0' elec='0' direction='3' part='0' number='3' show='1' length='30' number_pos='0' centre_name='0'>A2</PIN>
+				<PIN pos='174.00000,80.00000' which='0' elec='0' direction='3' part='0' number='4' show='1' length='30' number_pos='0' centre_name='0'>A3</PIN>
+				<PIN pos='174.00000,82.00000' which='0' elec='0' direction='3' part='0' number='5' show='1' length='30' number_pos='0' centre_name='0'>A4</PIN>
+				<PIN pos='174.00000,84.00000' which='0' elec='0' direction='3' part='0' number='6' show='1' length='30' number_pos='0' centre_name='0'>A5</PIN>
+				<PIN pos='174.00000,70.00000' which='0' elec='0' direction='3' part='0' number='1' show='1' length='30' number_pos='0' centre_name='0'>VIN</PIN>
+				<PIN pos='174.00000,68.00000' which='0' elec='0' direction='3' part='0' number='2' show='1' length='30' number_pos='0' centre_name='0'>GND</PIN>
+				<PIN pos='174.00000,66.00000' which='0' elec='0' direction='3' part='0' number='3' show='1' length='30' number_pos='0' centre_name='0'>GND</PIN>
+				<PIN pos='174.00000,64.00000' which='0' elec='0' direction='3' part='0' number='4' show='1' length='30' number_pos='0' centre_name='0'>5V</PIN>
+				<PIN pos='174.00000,62.00000' which='0' elec='0' direction='3' part='0' number='5' show='1' length='30' number_pos='0' centre_name='0'>3.3V</PIN>
+				<PIN pos='174.00000,60.00000' which='0' elec='0' direction='3' part='0' number='6' show='1' length='30' number_pos='0' centre_name='0'>RESET</PIN>
+				<PIN pos='174.00000,58.00000' which='0' elec='0' direction='3' part='0' number='7' show='1' length='30' number_pos='0' centre_name='0'>IOREF</PIN>
+				<RECTANGLE a='184.00000,44.00000' b='186.00000,48.00000' style='2' fill='1'/>
+				<RECTANGLE a='198.00000,48.00000' b='202.00000,42.00000' style='2' fill='2'/>
+				<TEXT pos='196.00000,80.00000' direction='0' font='3' color='000000'>Ardunio UNO</TEXT>
+			</TinyCAD>
+		</SYMBOLDEF>
+		<OPTIONS>
+			<GRID>0</GRID>
+			<UNITS>0</UNITS>
+			<COLOR_WIRE>FF0000</COLOR_WIRE>
+			<COLOR_BUS>0000FF</COLOR_BUS>
+			<COLOR_JUNCTION>000000</COLOR_JUNCTION>
+			<COLOR_NOCONNECT>000000</COLOR_NOCONNECT>
+			<COLOR_LABEL>208000</COLOR_LABEL>
+			<COLOR_POWER>000000</COLOR_POWER>
+			<COLOR_PIN>4040C0</COLOR_PIN>
+			<COLOR_HIDDEN_PIN>208020</COLOR_HIDDEN_PIN>
+			<COLOR_BACKGROUND>FFFFFF</COLOR_BACKGROUND>
+			<COLOR_NOTETEXT_FILL>AFFFFF</COLOR_NOTETEXT_FILL>
+			<COLOR_NOTETEXT_LINE>FF0000</COLOR_NOTETEXT_LINE>
+			<COLOR_NOTETEXT_TEXT>FF0000</COLOR_NOTETEXT_TEXT>
+		</OPTIONS>
+		<SYMBOL id='3' pos='240.00000,152.00000' part='0' rotate='0' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+			<FIELD type='0' description='Ref' value='' show='1' pos='1.00000,-39.60000'/>
+			<FIELD type='0' description='Name' value='' show='1' pos='1.00000,-42.00000'/>
+			<FIELD type='2' description='$$SPICE_PROLOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
+			<FIELD type='2' description='$$SPICE_EPILOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
+			<FIELD type='1' description='Package' value='' show='0' pos='1.00000,-37.20000'/>
+		</SYMBOL>
+	</TinyCAD>
+</TinyCADSheets>
