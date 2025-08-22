@@ -44,7 +44,7 @@ void loop()
   if (nDevices == 0)
     Serial.println("Keine I2C Geräte gefunden\n");
   else
-    Serial.println("Scanvorgang Abgeschlosse\n");
+    Serial.println("Scanvorgang Abgeschlossen\n");
 
   delay(10000);
 }

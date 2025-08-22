@@ -1,7 +1,9 @@
 //i2c Slave Code
 #include <Wire.h>
 #include "BNO055_support.h"		//Contains the bridge code between the API and Arduino
-#include <SoftwareSerial.h> 
+#include <SoftwareSerial.h>
+#include "VL53L0X.h"
+
 //#define DEBUG
 
 //This structure contains the details of the BNO055 device that is connected. (Updated after initialization)
@@ -31,6 +33,9 @@ int correction = 0;
 SoftwareSerial mySerial(5, 4);
 char status = '0';
 char aktuellerStatus = '1'; // '1' = aktiv, '2' = deaktiviert
+
+// VL53L0X Sensor
+VL53L0X sensor;
 
 void setup()
 {
@@ -112,26 +117,46 @@ void setup()
     // bitwise AND of sensor calibration status
     calibStatus = accelCalibStatus & magCalibStatus & gyroCalibStatus & sysCalibStatus;
   }
+
+  // VL53L0X Sensor starten
+  sensor.init();
+  sensor.setTimeout(500);
+
+  //Long Range Mode aktivieren
+  sensor.setSignalRateLimit(0.1); // Standard 0.25 → kleinerer Wert = empfindlicher
+  sensor.setVcselPulsePeriod(VL53L0X::VcselPeriodPreRange, 18);
+  sensor.setVcselPulsePeriod(VL53L0X::VcselPeriodFinalRange, 14);
+
+  // Messzeit verlängern (Timing Budget)
+  sensor.setMeasurementTimingBudget(500000); // 200ms pro Messung
+
+  Serial.println("VL53L0X Long Range Mode gestartet");
+  mySerial.println("VL53L0X Long Range Mode gestartet");  
+  
 }
 
 void loop()
 {
+  uint16_t distance = sensor.readRangeSingleMillimeters();
 
-  if (mySerial.available()) {
-    status = mySerial.read();
-    if (status == '1' || status == '2') {
-        aktuellerStatus = status; // Speichere den neuen Zustand
-    }
+  if (sensor.timeoutOccurred() || distance >= 8190 || distance == 0) {//8190
+    Serial.println("Außerhalb des Messbereichs");
+    mySerial.println("Außerhalb des Messbereichs");
+  } else {
+    Serial.print("Abstand: ");
+    Serial.print(distance);
+    Serial.println(" mm");
+
+    mySerial.print("Abstand: ");
+    mySerial.print(distance);
+    mySerial.println(" mm");
   }
-  if(aktuellerStatus == '1'){
-      //Update Euler data into the structure
-    bno055_read_euler_hrp(&myEulerData);
+  
+  //Update Euler data into the structure
+  bno055_read_euler_hrp(&myEulerData);
 
-
-    // winkel halten versuchen
-    targetPulses_gesamt = 70;
-
-    angle = (float(myEulerData.h) / 16.00);
+  angle = (float(myEulerData.h) / 16.00);
+  if(distance >= 100){
     delta_angle = angle - target_angle;
 
     correction = 0.5 * delta_angle;
@@ -140,25 +165,22 @@ void loop()
     mySerial.println(correction);
     targetPulses_Motor1 = constrain(targetPulses_gesamt + correction, -130, 130);
     targetPulses_Motor2 = constrain(targetPulses_gesamt - correction, -130, 130);
+  }
+  else{
+    targetPulses_Motor1 = 0;
+    targetPulses_Motor2 = 0;
+  }
+  // angepasste Geschwindigkeiten je nach Winkel
+  // targetPulses_Motor1 = map((float(myEulerData.h) / 16.00),0,360,-130,130);
+  // targetPulses_Motor2 = -targetPulses_Motor1;
+  mySerial.print("targetPulses_Motor1: ");
+  mySerial.print(targetPulses_Motor1);
+  mySerial.print(" targetPulses_Motor2: ");
+  mySerial.println(targetPulses_Motor2);
+  sendeZuSlave(0x01, targetPulses_Motor1);
+  sendeZuSlave(0x02, targetPulses_Motor2);
 
-    // angepasste Geschwindigkeiten je nach Winkel
-    // targetPulses_Motor1 = map((float(myEulerData.h) / 16.00),0,360,-130,130);
-    // targetPulses_Motor2 = -targetPulses_Motor1;
-    mySerial.print("targetPulses_Motor1: ");
-    mySerial.print(targetPulses_Motor1);
-    mySerial.print(" targetPulses_Motor2: ");
-    mySerial.println(targetPulses_Motor2);
-    sendeZuSlave(0x01, targetPulses_Motor1);
-    sendeZuSlave(0x02, targetPulses_Motor2);
-    delay(200);
-  }
-  else if(aktuellerStatus == '2'){
-    mySerial.println("deaktiviert!!!");
-    sendeZuSlave(0x01, 0);
-    sendeZuSlave(0x02, 0);
-    delay(2000);
-  }
-  
+
 }
 
 void sendeZuSlave(uint8_t adresse, int16_t wert) {
