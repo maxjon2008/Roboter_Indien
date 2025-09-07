@@ -28,13 +28,9 @@ SoftwareSerial mySerial(5, 4);
 
 //Orientierung:
 float targetAngle = 0.0;
-int targetAngle_set = 0;
-
-int basespeed = 0;
 
 // PID-Parameter (Startwerte, dann tunen)
-float Kp = 0.1;
-
+float Kp = 0.3;
 
 void setup() {
   Wire.begin();//0x05
@@ -46,16 +42,16 @@ void setup() {
 
   while (!Serial) delay(10);  // wait for serial port to open!
 
-  mySerial.println("Orientation Sensor Test"); Serial.println("");
+  Serial.println("Orientation Sensor Test"); Serial.println("");
 
   /* Initialise the sensor */
   if(!bno.begin())
   {
     /* There was a problem detecting the BNO055 ... check your connections */
-    mySerial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+    Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
     while(1);
   }
-  mySerial.print("test");
+  Serial.print("test");
   delay(1000);
 
   /* Display some basic information on this sensor */
@@ -78,8 +74,7 @@ void setup() {
 }
 
 void loop() {
-
-  if ((millis() - lastTime) >= 200) //To stream without using additional timers
+  if ((millis() - lastTime) >= 500) //To stream at 5Hz without using additional timers
   {
     lastTime = millis();
 
@@ -88,8 +83,8 @@ void loop() {
     bno.getEvent(&event);
 
     /* Display the floating point data */
-    mySerial.print("X: ");
-    mySerial.print(event.orientation.x, 3);
+    Serial.print("X: ");
+    Serial.print(event.orientation.x, 4);
 
     /* Optional: Display calibration status */
     displayCalStatus();
@@ -98,74 +93,30 @@ void loop() {
     //displaySensorStatus();
 
     /* New line for the next sample */
-    mySerial.println("");
-    uint8_t system, gyro, accel, mag;
-    system = gyro = accel = mag = 0;
-    bno.getCalibration(&system, &gyro, &accel, &mag);
+    Serial.println("");
 
-    if (targetAngle_set == 0) {
-      uint8_t system, gyro, accel, mag;
-      bno.getCalibration(&system, &gyro, &accel, &mag);
-
-      // Prüfen, ob alle Sensoren voll kalibriert sind
-      if (system == 3 && gyro == 3 && accel == 3 && mag == 3) {
-        mySerial.println("Setze targetAngle...");
-        delay(10000);  // Pause
-
-        sensors_event_t event;
-        bno.getEvent(&event); // aktuelles Event lesen
-
-        targetAngle = event.orientation.x;
-        mySerial.print("targetAngle: ");
-        mySerial.println(targetAngle);
-
-        targetAngle_set = 1;
-      }
-    }
     
     float error = wrap180(targetAngle - event.orientation.x); // -> [-180..180]
 
     error = Kp * error; // P-Regler
 
-    targetPulses_Motor1 = constrain(basespeed + error, -120, 120);
-    targetPulses_Motor2 = constrain(basespeed - error, -120, 120);
-    targetPulses_Motor3 = constrain(basespeed + error, -120, 120);
-    targetPulses_Motor4 = constrain(basespeed - error, -120, 120);
+    targetPulses_Motor1 = constrain(20 + error, -120, 120);
+    targetPulses_Motor2 = constrain(20 - error, -120, 120);
+    targetPulses_Motor3 = constrain(20 + error, -120, 120);
+    targetPulses_Motor4 = constrain(20 - error, -120, 120);
 
 
     sendtoSlave(0x08, -targetPulses_Motor1, 9999);
     sendtoSlave(0x09, targetPulses_Motor2, 9999);
     sendtoSlave(0x0A, -targetPulses_Motor3, 9999);
     sendtoSlave(0x0B, targetPulses_Motor4, 9999);
-
-    if(mySerial.available()){
-      String input = mySerial.readStringUntil('\n');
-      input.trim();
-
-      if (input.startsWith("S=")) {
-        basespeed = input.substring(2).toInt();
-        mySerial.print("Speed geändert: ");
-        mySerial.println(basespeed);
-      }
-
-      else if (input.startsWith("A=")) {
-        targetAngle = input.substring(2).toInt();
-        mySerial.print("targetAngle geändert: ");
-        mySerial.println(targetAngle);
-      }
-      else if (input.startsWith("K=")) {
-        Kp = input.substring(2).toFloat();
-        mySerial.print("Kp geändert: ");
-        mySerial.println(Kp);
-      }
-      else {
-        mySerial.print("Unbekannter Befehl: ");
-        mySerial.println(input);
-      }
-      delay(1000);
-    }
-
   }
+
+
+
+
+
+
 
 }
 
@@ -239,19 +190,19 @@ void displayCalStatus(void)
   bno.getCalibration(&system, &gyro, &accel, &mag);
 
   /* The data should be ignored until the system calibration is > 0 */
-  //mySerial.print("\t");
+  Serial.print("\t");
   if (!system)
   {
-    mySerial.print(" ! ");
+    Serial.print("! ");
   }
 
   /* Display the individual values */
-  mySerial.print("Sys:");
-  mySerial.print(system, DEC);
-  mySerial.print(" G:");
-  mySerial.print(gyro, DEC);
-  mySerial.print(" A:");
-  mySerial.print(accel, DEC);
-  mySerial.print(" M:");
-  mySerial.print(mag, DEC);
+  Serial.print("Sys:");
+  Serial.print(system, DEC);
+  Serial.print(" G:");
+  Serial.print(gyro, DEC);
+  Serial.print(" A:");
+  Serial.print(accel, DEC);
+  Serial.print(" M:");
+  Serial.print(mag, DEC);
 }

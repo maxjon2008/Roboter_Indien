@@ -46,5 +46,5 @@ void loop()
   else
     Serial.println("Scanvorgang Abgeschlossen\n");
 
-  delay(10000);
+  delay(1000);
 }

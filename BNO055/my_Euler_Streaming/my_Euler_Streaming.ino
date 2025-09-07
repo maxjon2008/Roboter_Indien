@@ -32,7 +32,7 @@
 #include <SoftwareSerial.h> 
 
 // conditional compilation
-//#define DEBUG
+#define DEBUG
 
 //The device address is set to BNO055_I2C_ADDR2 in this example. You can change this in the BNO055.h file in the code segment shown below.
 // /* bno055 I2C Address */
@@ -97,30 +97,31 @@ void setup() //This code is executed once
  
   pinMode(motor4_A,OUTPUT);
 
+
   //Initialize I2C communication
   Wire.begin();
 
   // check I2C transmission
-  // address = 0x28;
-  // Wire.beginTransmission(address);
-  // error = Wire.endTransmission();
-  // if (error == 0)
-  // {
-  //   Serial.print("I2C device found at address 0x");
-  //   Serial.print(address, HEX);
-  //   Serial.println("  !");
-  // }
-  // else
-  // {
-  //   Serial.println("I2C Device error or I2C device not found");
-  // }
-  // delay(5000);
+  address = 0x28;
+  Wire.beginTransmission(address);
+  error = Wire.endTransmission();
+  if (error == 0)
+  {
+    Serial.print("I2C device found at address 0x");
+    Serial.print(address, HEX);
+    Serial.println("  !");
+  }
+  else
+  {
+    Serial.println("I2C Device error or I2C device not found");
+  }
+  delay(5000);
 
   //Initialization of the BNO055
   BNO_Init(&myBNO); //Assigning the structure to hold information about the device
 
   //Configuration to operation mode
-   bno055_set_operation_mode(OPERATION_MODE_NDOF);
+  bno055_set_operation_mode(OPERATION_MODE_NDOF);
   //bno055_set_operation_mode(OPERATION_MODE_COMPASS);
 
   delay(1);
