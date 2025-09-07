@@ -1,4 +1,8 @@
 #include "roboter_master.h"
+#include <Arduino.h>
+#include <Wire.h>
+#include <SoftwareSerial.h>
+#include "VL53L0X.h" 
 
 extern SoftwareSerial mySerial; // kommt aus dem Sketch
 extern VL53L0X TOF_sensor; // kommt aus dem Sketch
@@ -7,6 +11,23 @@ extern int16_t targetPulses_Motor1;
 extern int16_t targetPulses_Motor2;
 extern int16_t targetPulses_Motor3;
 extern int16_t targetPulses_Motor4;
+
+extern int distance_TOF;
+
+void getdistance_TOF(){
+    distance_TOF = TOF_sensor.readRangeSingleMillimeters();
+    
+    // Messbereich prüfen
+    if (TOF_sensor.timeoutOccurred() || distance_TOF >= 8190 || distance_TOF == 0) {
+        Serial.println("Außerhalb des Messbereichs");
+        mySerial.println("Außerhalb des Messbereichs");
+    
+        distance_TOF = 0;
+    } 
+    else {
+        distance_TOF = distance_TOF;
+    }
+}
 
 void checkDistanceAndSetPulses_on_off(int Pulse_an) {
     uint16_t distance = TOF_sensor.readRangeSingleMillimeters();

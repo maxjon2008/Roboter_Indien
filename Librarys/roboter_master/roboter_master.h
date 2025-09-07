@@ -6,6 +6,7 @@
 #include <SoftwareSerial.h>
 #include "VL53L0X.h" 
 
+void getdistance_TOF();
 void sendtoSlave(uint8_t adresse, int16_t pps, int16_t pulse);
 void checkDistanceAndSetPulses_on_off(int pulse_an);
 

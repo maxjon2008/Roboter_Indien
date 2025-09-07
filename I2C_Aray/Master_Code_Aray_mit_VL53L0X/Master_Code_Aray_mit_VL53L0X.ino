@@ -57,4 +57,18 @@ void loop() {
   sendtoSlave(0x0B, -targetPulses_Motor4, 200);
 
   delay(1000);
+
+  sendtoSlave(0x08, -targetPulses_Motor1); //max_pulse werden nicht berücksichtig und in Ruhe gelassen
+  sendtoSlave(0x09, targetPulses_Motor2);
+  sendtoSlave(0x0A, -targetPulses_Motor3);
+  sendtoSlave(0x0B, targetPulses_Motor4);
+
+  delay(1000);
+  
+  sendtoSlave(0x08, targetPulses_Motor1);
+  sendtoSlave(0x09, -targetPulses_Motor2);
+  sendtoSlave(0x0A, targetPulses_Motor3);
+  sendtoSlave(0x0B, -targetPulses_Motor4);
+
+  delay(1000);
 }
