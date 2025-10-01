@@ -64,7 +64,7 @@ unsigned char sysCalibStatus = 0;
 unsigned char calibStatus = 0; 
 
 // serial data output interface
-SoftwareSerial mySerial(5, 4);
+//SoftwareSerial mySerial(5, 4);
 
 int motor1_A=13;
 int motor1_Speed=11;
@@ -121,15 +121,21 @@ void setup() //This code is executed once
   BNO_Init(&myBNO); //Assigning the structure to hold information about the device
 
   //Configuration to operation mode
-  bno055_set_operation_mode(OPERATION_MODE_NDOF);
+ // bno055_set_operation_mode(OPERATION_MODE_NDOF);
   //bno055_set_operation_mode(OPERATION_MODE_COMPASS);
 
-  delay(1);
+  bno055_set_operation_mode(OPERATION_MODE_CONFIG);
+  delay(50);
+  bno055_set_operation_mode(OPERATION_MODE_NDOF);
+  delay(500);
+
+
+  delay(400);
 
 
 
   //Initialize the Serial Port for data output
-  mySerial.begin(9600);
+  //mySerial.begin(9600);
 
   // initialize calib_status
   calibStatus = 0; 
@@ -144,21 +150,21 @@ void setup() //This code is executed once
 		bno055_get_syscalib_status(&sysCalibStatus); //To read out the System Calibration Status (0-3)
     
     // Message to serial monitor
-    mySerial.println("waiting for sensor calibration");
+    // mySerial.println("waiting for sensor calibration");
 
 #ifndef DEBUG    
-    // print sensor calibration status
-		mySerial.print("accelCalibStatus:");
-		mySerial.print(accelCalibStatus);
-    mySerial.print(",");
-		mySerial.print("magCalibStatus:");
-		mySerial.print(magCalibStatus);
-    mySerial.print(",");
-		mySerial.print("gyroCalibStatus:");
-		mySerial.print(gyroCalibStatus);
-    mySerial.print(",");
-		mySerial.print("sysCalibStatus:");
-		mySerial.println(sysCalibStatus);
+//     // print sensor calibration status
+// 		mySerial.print("accelCalibStatus:");
+// 		mySerial.print(accelCalibStatus);
+//     mySerial.print(",");
+// 		mySerial.print("magCalibStatus:");
+// 		mySerial.print(magCalibStatus);
+//     mySerial.print(",");
+// 		mySerial.print("gyroCalibStatus:");
+// 		mySerial.print(gyroCalibStatus);
+//     mySerial.print(",");
+// 		mySerial.print("sysCalibStatus:");
+// 		mySerial.println(sysCalibStatus);
 #else 
     // print sensor calibration status
 		Serial.print("accelCalibStatus:");
@@ -214,17 +220,17 @@ void loop() //This code is looped forever
     bno055_read_euler_hrp(&myEulerData);
 
 #ifndef DEBUG
-    mySerial.print("TimeStamp:");				//To read out the Time Stamp
-    mySerial.print(lastTime);
-    mySerial.print(",");
-    mySerial.print("Heading(Yaw):");				//To read out the Heading (Yaw)
-    mySerial.print(float(myEulerData.h) / 16.00);		//Convert to degrees
-    mySerial.print(",");
-    mySerial.print("Roll:");					//To read out the Roll
-    mySerial.print(float(myEulerData.r) / 16.00);		//Convert to degrees
-    mySerial.print(",");
-    mySerial.print("Pitch:");				//To read out the Pitch
-    mySerial.println(float(myEulerData.p) / 16.00);		//Convert to degrees
+//     mySerial.print("TimeStamp:");				//To read out the Time Stamp
+//     mySerial.print(lastTime);
+//     mySerial.print(",");
+//     mySerial.print("Heading(Yaw):");				//To read out the Heading (Yaw)
+//     mySerial.print(float(myEulerData.h) / 16.00);		//Convert to degrees
+//     mySerial.print(",");
+//     mySerial.print("Roll:");					//To read out the Roll
+//     mySerial.print(float(myEulerData.r) / 16.00);		//Convert to degrees
+//     mySerial.print(",");
+//     mySerial.print("Pitch:");				//To read out the Pitch
+//     mySerial.println(float(myEulerData.p) / 16.00);		//Convert to degrees
 #else
     Serial.print("TimeStamp:");				//To read out the Time Stamp
     Serial.print(lastTime);
