@@ -2,10 +2,21 @@
 #include <SoftwareSerial.h>
 #include <VL53L0X.h>
 #include <roboter_master.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BNO055.h>
-#include <utility/imumaths.h>
+#include "BNO055_support.h"	
+// #include <utility/imumaths.h>
 //#define DEBUG
+
+//This structure contains the details of the BNO055 device that is connected. (Updated after initialization)
+struct bno055_t myBNO;
+struct bno055_euler myEulerData; //Structure to hold the Euler data
+struct bno055_quaternion myQuaternionData; // Structure to hold Quaternion Data
+
+// variables hold calibration status
+unsigned char accelCalibStatus = 0;	
+unsigned char magCalibStatus = 0;	
+unsigned char gyroCalibStatus = 0;	
+unsigned char sysCalibStatus = 0;	
+unsigned char calibStatus = 0; 
 
 unsigned long lastTime = 0;
 unsigned long lastTime_M = 0;
@@ -17,18 +28,11 @@ int targetPulses_Motor3 = 30; //Zielgeschwindigkeit von Motor3
 int targetPulses_Motor4 = 30; //Zielgeschwindigkeit von Motor4
 
 
-//BNO055:
-
-// Check I2C device address and correct line below (by default address is 0x29 or 0x28)
-//                                   id, address
-Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire);
-
 // serial data output interface (bluetooth)
 SoftwareSerial mySerial(5, 4);
 
 //Orientierung:
 float targetAngle = 0.0;
-int targetAngle_set = 0;
 
 int basespeed = 0;
 
@@ -43,38 +47,81 @@ void setup() {
   //Initialize the Serial Port for data output
   mySerial.begin(9600);
 
+  //Initialization of the BNO055
+  BNO_Init(&myBNO); //Assigning the structure to hold information about the device
 
-  while (!Serial) delay(10);  // wait for serial port to open!
+  //Configuration to operation mode
+  bno055_set_operation_mode(OPERATION_MODE_NDOF);
+  //bno055_set_operation_mode(OPERATION_MODE_COMPASS);
 
-  mySerial.println("Orientation Sensor Test"); Serial.println("");
+  delay(1);
 
-  /* Initialise the sensor */
-  if(!bno.begin())
+  // initialize calib_status
+  calibStatus = 0; 
+  
+  // wait until every sensor calibration returns 3
+  while(calibStatus != 3)
   {
-    /* There was a problem detecting the BNO055 ... check your connections */
-    mySerial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-    while(1);
+    // Get sensor calibration status
+		bno055_get_accelcalib_status(&accelCalibStatus); //To read out the Accelerometer Calibration Status (0-3)
+		bno055_get_magcalib_status(&magCalibStatus); //To read out the Magnetometer Calibration Status (0-3)
+		bno055_get_gyrocalib_status(&gyroCalibStatus); //To read out the Gyroscope Calibration Status (0-3)
+		bno055_get_syscalib_status(&sysCalibStatus); //To read out the System Calibration Status (0-3)
+    
+    // Message to serial monitor
+    Serial.println("waiting for sensor calibration");
+
+#ifndef DEBUG    
+    // print sensor calibration status
+		mySerial.print("accelCalibStatus:");
+		mySerial.print(accelCalibStatus);
+    mySerial.print(",");
+		mySerial.print("magCalibStatus:");
+		mySerial.print(magCalibStatus);
+    mySerial.print(",");
+		mySerial.print("gyroCalibStatus:");
+		mySerial.print(gyroCalibStatus);
+    mySerial.print(",");
+		mySerial.print("sysCalibStatus:");
+		mySerial.println(sysCalibStatus);
+#else 
+    // print sensor calibration status
+		Serial.print("accelCalibStatus:");
+		Serial.print(accelCalibStatus);
+    Serial.print(",");
+		Serial.print("magCalibStatus:");
+		Serial.print(magCalibStatus);
+    Serial.print(",");
+		Serial.print("gyroCalibStatus:");
+		Serial.print(gyroCalibStatus);
+    Serial.print(",");
+		Serial.print("sysCalibStatus:");
+		Serial.println(sysCalibStatus);
+#endif
+    // 1 second pause
+    delay(1000);
+
+    // bitwise AND of sensor calibration status
+    calibStatus = accelCalibStatus & magCalibStatus & gyroCalibStatus & sysCalibStatus;
   }
-  mySerial.print("test");
-  delay(1000);
-
-  /* Display some basic information on this sensor */
-  displaySensorDetails();
-
-  /* Optional: Display current status */
-  displaySensorStatus();
-
-  bno.setExtCrystalUse(true);
 
 
-  // mySerial.println("set targetAngle ...");
-  // delay(10000);
+  mySerial.println("set targetAngle ...");
+  unsigned long start = millis();
+  while (millis() - start < 10000) {
+    //Update Euler data into the structure
+    bno055_read_euler_hrp(&myEulerData);
+    mySerial.print("Angle: ");
+    mySerial.println(float(myEulerData.h) / 16.00);
+    delay(500);
+  }
 
 
 
-  // targetAngle = (float(myEulerData.h) / 16.00);
-  // mySerial.print("targetAngle: ");
-  // mySerial.println(targetAngle);
+
+  targetAngle = (float(myEulerData.h) / 16.00);
+  mySerial.print("targetAngle: ");
+  mySerial.println(targetAngle);
 }
 
 void loop() {
@@ -83,47 +130,22 @@ void loop() {
   {
     lastTime = millis();
 
-    /* Get a new sensor event */
-    sensors_event_t event;
-    bno.getEvent(&event);
+    //Update Euler data into the structure
+    bno055_read_euler_hrp(&myEulerData);
+
+
+    mySerial.print(" targetAngle: ");
+    mySerial.print(targetAngle);
 
     /* Display the floating point data */
     mySerial.print("X: ");
-    mySerial.print(event.orientation.x, 3);
+    mySerial.println(float(myEulerData.h) / 16.00, 2);
 
-    /* Optional: Display calibration status */
-    displayCalStatus();
-
-    /* Optional: Display sensor status (debug only) */
-    //displaySensorStatus();
-
-    /* New line for the next sample */
-    mySerial.println("");
-    uint8_t system, gyro, accel, mag;
-    system = gyro = accel = mag = 0;
-    bno.getCalibration(&system, &gyro, &accel, &mag);
-
-    if (targetAngle_set == 0) {
-      uint8_t system, gyro, accel, mag;
-      bno.getCalibration(&system, &gyro, &accel, &mag);
-
-      // Prüfen, ob alle Sensoren voll kalibriert sind
-      if (system == 3 && gyro == 3 && accel == 3 && mag == 3) {
-        mySerial.println("Setze targetAngle...");
-        delay(10000);  // Pause
-
-        sensors_event_t event;
-        bno.getEvent(&event); // aktuelles Event lesen
-
-        targetAngle = event.orientation.x;
-        mySerial.print("targetAngle: ");
-        mySerial.println(targetAngle);
-
-        targetAngle_set = 1;
-      }
-    }
     
-    float error = wrap180(targetAngle - event.orientation.x); // -> [-180..180]
+    
+    
+    
+    float error = wrap180(targetAngle - (float(myEulerData.h) / 16.00)); // -> [-180..180]
 
     error = Kp * error; // P-Regler
 
@@ -133,9 +155,9 @@ void loop() {
     targetPulses_Motor4 = constrain(basespeed - error, -120, 120);
 
 
-    sendtoSlave(0x08, -targetPulses_Motor1, 9999);
+    sendtoSlave(0x08, targetPulses_Motor1, 9999);
     sendtoSlave(0x09, targetPulses_Motor2, 9999);
-    sendtoSlave(0x0A, -targetPulses_Motor3, 9999);
+    sendtoSlave(0x0A, targetPulses_Motor3, 9999);
     sendtoSlave(0x0B, targetPulses_Motor4, 9999);
 
     if(mySerial.available()){
@@ -174,84 +196,4 @@ float wrap180(float error_angle){
   while (error_angle > 180) error_angle -= 360;
   while (error_angle < -180) error_angle += 360;
   return error_angle;
-}
-
-
-
-/**************************************************************************/
-/*
-    Displays some basic information on this sensor from the unified
-    sensor API sensor_t type (see Adafruit_Sensor for more information)
-*/
-/**************************************************************************/
-void displaySensorDetails(void)
-{
-  sensor_t sensor;
-  bno.getSensor(&sensor);
-  Serial.println("------------------------------------");
-  Serial.print  ("Sensor:       "); Serial.println(sensor.name);
-  Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
-  Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
-  Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println(" xxx");
-  Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println(" xxx");
-  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println(" xxx");
-  Serial.println("------------------------------------");
-  Serial.println("");
-  delay(500);
-}
-
-/**************************************************************************/
-/*
-    Display some basic info about the sensor status
-*/
-/**************************************************************************/
-void displaySensorStatus(void)
-{
-  /* Get the system status values (mostly for debugging purposes) */
-  uint8_t system_status, self_test_results, system_error;
-  system_status = self_test_results = system_error = 0;
-  bno.getSystemStatus(&system_status, &self_test_results, &system_error);
-
-  /* Display the results in the Serial Monitor */
-  Serial.println("");
-  Serial.print("System Status: 0x");
-  Serial.println(system_status, HEX);
-  Serial.print("Self Test:     0x");
-  Serial.println(self_test_results, HEX);
-  Serial.print("System Error:  0x");
-  Serial.println(system_error, HEX);
-  Serial.println("");
-  delay(500);
-}
-
-/**************************************************************************/
-/*
-    Display sensor calibration status
-*/
-/**************************************************************************/
-void displayCalStatus(void)
-{
-  /* Get the four calibration values (0..3) */
-  /* Any sensor data reporting 0 should be ignored, */
-  /* 3 means 'fully calibrated" */
-  uint8_t system, gyro, accel, mag;
-  system = gyro = accel = mag = 0;
-  bno.getCalibration(&system, &gyro, &accel, &mag);
-
-  /* The data should be ignored until the system calibration is > 0 */
-  //mySerial.print("\t");
-  if (!system)
-  {
-    mySerial.print(" ! ");
-  }
-
-  /* Display the individual values */
-  mySerial.print("Sys:");
-  mySerial.print(system, DEC);
-  mySerial.print(" G:");
-  mySerial.print(gyro, DEC);
-  mySerial.print(" A:");
-  mySerial.print(accel, DEC);
-  mySerial.print(" M:");
-  mySerial.print(mag, DEC);
 }
