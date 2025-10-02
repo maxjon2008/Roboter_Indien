@@ -18,7 +18,8 @@ long intervall = 100;
 //angekommene Werte:
 int max_pulse = 0;
 int targetPulses = 0;
-int16_t daten[2];
+int pwm_set = 0;
+int16_t daten[3];
 
 
 void setup() {

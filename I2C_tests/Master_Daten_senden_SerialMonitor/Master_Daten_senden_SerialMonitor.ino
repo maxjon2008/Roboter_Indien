@@ -26,7 +26,8 @@ void loop() {
     String inputString = Serial.readStringUntil('\n'); // Zeilenende
     int16_t target = inputString.toInt();             // in int16 umwandeln
 
-    sendtoSlave(0x08, target);
+    sendtoSlave(0x09, target);
+    
 
     Serial.print("Gesendet an Slave: ");
     Serial.println(target);

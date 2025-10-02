@@ -94,16 +94,16 @@ void loop() {
 
     int error_distance = (distance_TOF_rechts_hinten + distance_TOF_rechts_vorne)/2 - solldistance; //mittleren Anstand berechnung und error berechnen
 
-    target_Angle =  constrain(kp_angle * error_distance, -max_correction_angle, max_correction_angle); //P-Regler für Korrektur falls zu weit weg/nah
+    target_Angle =  constrain(kp_angle * error_distance, -max_correction_angle, max_correction_angle); //P-Regler für Korrektur falls zu weit weg/nah //maximalen Korrektur Winkel beschränken
 
     float error_angle = current_Angle - target_Angle; //korrektur Winkel berechnen
 
-    int steer = Kp * error_angle; //P-Regler für korrektur Winkel; maximalen Korrektur Winkel beschränken
+    int steer = Kp * error_angle; //P-Regler für korrektur Winkel
 
-    sendtoSlave(0x08, constrain(baseSpeed - steer, -120, 120), 200);
-    sendtoSlave(0x09, constrain(baseSpeed + steer, -120, 120), 200);
-    sendtoSlave(0x0A, constrain(baseSpeed - steer, -120, 120), 200);
-    sendtoSlave(0x0B, constrain(baseSpeed + steer, -120, 120), 200);
+    sendtoSlave(0x08, constrain(baseSpeed - steer, -120, 120), 0);
+    sendtoSlave(0x09, constrain(baseSpeed + steer, -120, 120), 0);
+    sendtoSlave(0x0A, constrain(baseSpeed - steer, -120, 120), 0);
+    sendtoSlave(0x0B, constrain(baseSpeed + steer, -120, 120), 0);
 
     mySerial.print("Speed: ");
     mySerial.print(baseSpeed);

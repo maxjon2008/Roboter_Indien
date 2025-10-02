@@ -38,7 +38,7 @@ void loop() {
 
   unsigned long currentMillis = millis();
 
-  if((currentMillis - previousMillis) >= intervall && (max_pulse == 0 || gesammt_pulse <= max_pulse))
+  if((currentMillis - previousMillis) >= intervall &&(max_pulse == 0 || abs(gesammt_pulse) <= abs(max_pulse)))
     // Code hier läuft entweder:
     // - immer, wenn max_pulse == 0
     // - oder nur solange gesammt_pulse <= max_pulse
@@ -87,7 +87,7 @@ void loop() {
     pulse_Motor = 0;
   }
 
-  else if((currentMillis - previousMillis) >= intervall && gesammt_pulse >= max_pulse && max_pulse != 0)
+  else if((currentMillis - previousMillis) >= intervall && abs(gesammt_pulse) >= abs(max_pulse) && max_pulse != 0)
   {
 
     Serial.println("aus da max_pulse erreicht");
@@ -98,6 +98,4 @@ void loop() {
     Serial.println(gesammt_pulse);
   
   }
-
 }
-
